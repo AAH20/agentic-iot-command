@@ -1,5 +1,7 @@
 # Agentic_IoT_Command — Agentic Infrastructure Command Center
 
+![Overview tour across the synthetic demo sections](docs/media/overview.gif)
+
 [![CI](https://github.com/AAH20/agentic-iot-command/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AAH20/agentic-iot-command/actions/workflows/ci.yml)
 [![License: AGPL-3.0-only](https://img.shields.io/badge/License-AGPL--3.0-only-blue.svg)](LICENSE)
 
