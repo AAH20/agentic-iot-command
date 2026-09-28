@@ -7,8 +7,8 @@
 > with evidence, require policy and human authorization, and keep execution
 > explicitly disabled until independently validated.
 
-**Status:** early-stage source prototype. It is not installed on the Ubuntu
-host, has no deployed worker, and does not provide live infrastructure control.
+**Status:** early-stage source prototype—not production-ready. No worker is
+deployed on Ubuntu, and no live infrastructure control is enabled.
 
 ## Architecture
 
@@ -23,7 +23,9 @@ flowchart LR
   ADAPTER --> API
   API --> DB[(Tenant-scoped PostgreSQL)]
   AG[Agents and MCP clients] --> POLICY[Policy and approval gates]
-  POLICY --> PLAN[Typed plans and durable workflows]
+  POLICY --> HUMAN{Human approval required?}
+  HUMAN -->|Approved| PLAN[Typed plans and durable workflows]
+  HUMAN -->|Not approved| PROPOSAL[Remain proposal-only]
   PLAN --> API
   API --> EVID[Hash-linked evidence]
   API -. execution disabled .-> DENY[No live infrastructure mutation]
@@ -35,22 +37,25 @@ flowchart LR
 [VirtualBox demo boundary](docs/VIRTUALBOX_MUTATION_ADAPTER.md)
 
 <details>
-<summary>Detailed implementation status and security notes</summary>
+<summary>Implementation and security status · reviewed 2026-09-28</summary>
 
-Product brand: **Agentic_IoT_Command**. The existing PostgreSQL schema retains
-the legacy `opsatlas` namespace for compatibility; this does not change the
-product name and can be migrated separately.
+The PostgreSQL schema retains the legacy `opsatlas` namespace for compatibility.
 
 Defensive purple-team lab isolation, telemetry evidence, and read-only connector requirements are documented in [`docs/PURPLE_TEAM_READINESS.md`](docs/PURPLE_TEAM_READINESS.md).
 
-This repository is a handoff package for a fresh Codex agent. It describes a security-first, multi-layer control plane for operating macOS, Ubuntu, private datacenters, virtualization, Kubernetes/OpenShift, Terraform/OpenTofu, IAM/PAM, agent governance, and public cloud providers.
+Agentic IoT Command is an open-source design and source prototype for a
+governed infrastructure control plane. Its target architecture spans macOS and
+Ubuntu hosts, datacenters, virtualization, Kubernetes/OpenShift,
+Terraform/OpenTofu, IAM/PAM, agent governance, and public-cloud integrations.
+Most provider and execution integrations are design targets, not deployed
+features.
 
-The package has two separate objectives:
+The project has two related areas:
 
 1. **Skill supply-chain security:** every third-party agent skill is treated as untrusted input. NVIDIA SkillSpector is used before installation, before upgrades, and in CI. A scan is a gate, not proof of safety; approved skills still run in isolated environments with least privilege.
 2. **Infrastructure control plane:** a standards-based system that lets agents observe, plan, obtain explicit authorization, execute through scoped credentials, verify outcomes, and emit replayable evidence.
 
-The current reference implementation includes the fail-closed ingestion gate,
+The source prototype includes the fail-closed ingestion gate,
 runtime isolation policy, signed approval contract, read-only inventory,
 hash-chained evidence ledger, Ubuntu-hosted goal journal prototype, server-hashed
 task plan artifacts, task-bound approval queueing, fenced lease state, pinned-SSH
@@ -62,7 +67,7 @@ worker or enabled mutation path. Provider mutation adapters, JIT credential brok
 isolated mutation runners, and production access remain unavailable until their
 independent controls are implemented and validated.
 
-The current branch also includes an internal grant-issuance primitive that
+The source prototype also includes a grant-issuance primitive that
 revalidates either operator approval or a standing-policy profile plus its
 impact assessment against lease state. Execution-grant v2 binds the authorization
 mode and evidence digests separately, plus Ed25519 grant and runner-receipt
@@ -146,14 +151,13 @@ Start with the [architecture and implementation handoff](ARCHITECTURE_HANDOFF.md
 <summary>Full document and source index</summary>
 
 - [`SKILL_INGESTION_SECURITY.md`](./SKILL_INGESTION_SECURITY.md) — SkillSpector-centered ingestion, hooks, scanning, verdicts, quarantine, and runtime controls.
-- [`ARCHITECTURE_HANDOFF.md`](./ARCHITECTURE_HANDOFF.md) — complete system architecture and implementation plan for the new Codex agent.
+- [`ARCHITECTURE_HANDOFF.md`](./ARCHITECTURE_HANDOFF.md) — complete system architecture and implementation plan.
 - [`docs/HERMES_SWARM_GOVERNANCE.md`](./docs/HERMES_SWARM_GOVERNANCE.md) — Hermes-style swarm, skill trust, model routing, IAM/PAM, Computer Use isolation, adoption metrics, and rollout gates.
 - [`docs/COMMAND_CENTER_PROJECT_STRUCTURE.md`](./docs/COMMAND_CENTER_PROJECT_STRUCTURE.md) — target project tree, federated command-center/runtime boundaries, canonical evidence model, and staged implementation path.
 - [`docs/OPSATLAS_ARCHITECTURE.md`](./docs/OPSATLAS_ARCHITECTURE.md) — Agentic_IoT_Command OSS charter, Mermaid architectures, sensor fusion, contracts, integrations, trust boundaries, and commercial layers.
 - [`docs/ENERGY_TO_COMPUTE_OPERATIONS.md`](./docs/ENERGY_TO_COMPUTE_OPERATIONS.md) — energy-to-compute model, full data-center operating workflows, SOP controls, KPIs, governance classes, and rollout gates.
 - [`docs/OPSATLAS_UI_UX_AND_COMMERCIAL_BOUNDARIES.md`](./docs/OPSATLAS_UI_UX_AND_COMMERCIAL_BOUNDARIES.md) — modular UI architecture, operator information architecture, MasterKeys/key custody, OSS/commercial boundaries, agent-runtime and MCP governance, OpenRouter/vLLM model routing, a versioned cloud/IoT/OEM API connector portfolio, entitlement enforcement, and product acceptance tests.
 - [`docs/LOCAL_INTEGRATIONS.md`](./docs/LOCAL_INTEGRATIONS.md) — runnable loopback console, real read-only OpenRouter/vLLM catalog calls, and MCP Streamable HTTP discovery/tools-list with legacy fallback; lists required local configuration and current connector limits.
-- The same UI/UX specification now also covers the Agentic AI workbench, governed MCP registry/gateway, OpenRouter and vLLM routing, and the living vendor/API integration catalog with connector lifecycle controls.
 - [`schemas/swarm-agent-profile.schema.json`](./schemas/swarm-agent-profile.schema.json) — declarative constraints for skills, tools, model route, classification, target scope, delegation, budgets, and Computer Use; grants no authority on its own.
 - [`THREAT_MODEL.md`](./THREAT_MODEL.md) — attacker model, trust boundaries, abuse cases, and mitigations.
 - [`AGENT_BOOTSTRAP.md`](./AGENT_BOOTSTRAP.md) — first-session instructions for the fresh Codex agent.
@@ -289,7 +293,7 @@ sequenceDiagram
 
 | Stage | Scope | Exit evidence |
 |---|---|---|
-| 0 · Local demonstrator | Tenant-scoped schema, source-unverified UI, explicit synthetic walkthrough, read-only API | Seed/reset boundary tests, schema and policy tests, repeatable screenshots/GIF committed under `docs/media/` |
+| 0 · Local demonstrator | Tenant-scoped schema, source-unverified UI, explicit synthetic walkthrough, read-only API | Seed/reset boundary tests, schema and policy tests pass; screenshots/GIF remain outstanding |
 | 1 · Trustworthy source onboarding | Connector contract, secret-reference boundary, read-only probe, schema/unit/quality/freshness validation | Adapter contract tests, redacted diagnostic evidence, operator-reviewed tenant mapping |
 | 2 · Decision-quality analytics | Lineage-complete KPIs, data-quality SLOs, robust baselines, failure labels, reproducible model evaluations | Backtests, calibration/error reports, drift controls, human review; no forecast on insufficient/non-authoritative data |
 | 3 · Operational integrations | Versioned vendor/cloud/facility read adapters and durable workflow references | Vendor-specific sandbox tests, least privilege, rate-limit and stale-data behavior, rollback/runbook |
@@ -297,18 +301,19 @@ sequenceDiagram
 | 5 · Optional commercial services | Hosted control plane, enterprise identity, connector certification, fleet analytics and support | OSS/commercial boundary documented; customer-controlled credentials, export and exit tested |
 
 Stages are sequencing, not a claim that production readiness or live adapters
-are already achieved. Detailed implementation status and gaps remain in the
-architecture, integration, security, and local-development documents above.
+are already achieved. Detailed implementation status and gaps are described in
+the architecture, integration, security, and local-development documents.
 
-### Demo artifacts
+### Screenshots and GIF
 
 The local walkthrough is available at
 `http://127.0.0.1:8794/?tenant_id=00000000-0000-4000-8000-000000000001&demo=synthetic`.
-Screenshot and GIF files are a pre-release checklist item and are not committed
-yet; do not treat this README as claiming those media assets exist. Capture them
-from this explicit synthetic view, preserve the `SYNTHETIC DEMO · NOT LIVE`
-watermark, and place the reviewed files in `docs/media/` before publishing.
-No live connector probe belongs in the walkthrough.
+No screenshots or GIF are currently committed under `docs/media/`; the visual
+demo deliverable is still outstanding. This README intentionally does not use
+fabricated application imagery. Any future recording should use this explicit
+synthetic view, preserve the `SYNTHETIC DEMO · NOT LIVE` watermark, and avoid
+implying live integrations or infrastructure control. A complete feature tour
+will require multiple focused captures rather than one screen.
 
 ## License
 
