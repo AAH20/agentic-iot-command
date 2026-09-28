@@ -108,14 +108,18 @@ class GrantSignerServiceTests(unittest.TestCase):
             trust = Path("/usr/local/share") / f"a2z-grant-test-{uuid4().hex}"
             if not Path("/usr/bin/sudo").is_file():
                 self.skipTest("sudo is required to create the root-owned verifier trust fixture")
+            service_group = subprocess.run(
+                ["id", "-gn"], check=True, capture_output=True, text=True,
+            ).stdout.strip()
             subprocess.run(
-                ["sudo", "install", "-d", "-m", "0755", "--", str(trust)],
+                ["sudo", "install", "-d", "-o", "root", "-g", service_group,
+                 "-m", "0750", "--", str(trust)],
                 check=True, capture_output=True,
             )
             try:
                 subprocess.run(
-                    ["sudo", "install", "-m", "0644", "--", str(public_key),
-                     str(trust / "lab-issuer-v1.pem")],
+                    ["sudo", "install", "-o", "root", "-g", service_group,
+                     "-m", "0640", "--", str(public_key), str(trust / "lab-issuer-v1.pem")],
                     check=True, capture_output=True,
                 )
                 verifier = Ed25519ExecutionGrantVerifier(trust, require_root_owned_trust=True)
