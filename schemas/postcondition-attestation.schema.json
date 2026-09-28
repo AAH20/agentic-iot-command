@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.example/schemas/postcondition-attestation.schema.json",
+  "title": "Independent VirtualBox postcondition attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "verification_id", "receipt_id", "task_id", "tenant_id", "target_id", "operation_id", "environment", "plan_digest", "lease_generation", "verifier_id", "observed_at", "observed_state"],
+  "properties": {
+    "schema_version": {"const": "a2z-postcondition-attestation-v1"},
+    "verification_id": {"type": "string", "format": "uuid"},
+    "receipt_id": {"type": "string", "format": "uuid"},
+    "task_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "target_id": {"type": "string", "minLength": 1, "maxLength": 256, "not": {"const": "*"}},
+    "operation_id": {"const": "virtualbox.vm.set_demo_description"},
+    "environment": {"enum": ["lab", "development", "staging"]},
+    "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "lease_generation": {"type": "integer", "minimum": 1},
+    "verifier_id": {"type": "string", "minLength": 1, "maxLength": 256},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "observed_state": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["power_state", "description"],
+      "properties": {
+        "power_state": {"enum": ["powered_off", "running", "paused"]},
+        "description": {"type": "string", "maxLength": 256}
+      }
+    }
+  }
+}

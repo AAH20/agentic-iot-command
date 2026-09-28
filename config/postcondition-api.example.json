@@ -1,0 +1,11 @@
+{
+  "schema_version": "a2z-postcondition-api-config-v1",
+  "database_path": "/var/lib/a2z-control-plane/goals.sqlite3",
+  "verifier_registry_path": "/etc/a2z-control-plane/postcondition-verifiers.json",
+  "verifier_trust_directory": "/etc/a2z-control-plane/postcondition-attestation-trust",
+  "tls_certificate": "/etc/a2z-control-plane/postcondition-tls/postcondition-api.crt",
+  "tls_private_key": "/etc/a2z-control-plane/postcondition-tls/postcondition-api.key",
+  "client_ca": "/etc/a2z-control-plane/postcondition-tls/postcondition-client-ca.crt",
+  "bind_address": "127.0.0.1",
+  "port": 9444
+}

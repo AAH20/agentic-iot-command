@@ -1,0 +1,57 @@
+{
+  "version": 1,
+  "mode": "fail-closed",
+  "scanner": {
+    "name": "NVIDIA SkillSpector",
+    "required": true,
+    "min_version": "2.11.0",
+    "allow_static_only": false,
+    "max_scan_seconds": 900
+  },
+  "thresholds": {
+    "max_risk_score": 24,
+    "block_severities": ["HIGH", "CRITICAL"],
+    "conditional_severities": ["MEDIUM"],
+    "safe_recommendations": ["SAFE", "ALLOW"],
+    "conditional_recommendations": ["CAUTION"]
+  },
+  "reviewable_incomplete_reasons": ["reference_missing"],
+  "reviewable_reference_paths": ["SKILL.md"],
+  "conditional_review": {
+    "minimum_notes_length": 20,
+    "minimum_mitigation_length": 20,
+    "require_signed_owner_review": true,
+    "bind_reference_exceptions_to_report": true
+  },
+  "block_categories": [
+    "exfiltration",
+    "credential_access",
+    "privilege_escalation",
+    "prompt_injection",
+    "tool_poisoning",
+    "hidden_instructions",
+    "persistence",
+    "remote_code_execution",
+    "destructive_commands",
+    "system_prompt_leakage",
+    "cross_skill_access",
+    "unauthorized_networking"
+  ],
+  "runtime_defaults": {
+    "network": "deny",
+    "secrets": "deny",
+    "production": "deny",
+    "host_filesystem": "deny",
+    "privileged_process": "deny",
+    "ssh_agent_forwarding": "deny",
+    "rdp": "deny"
+  },
+  "approval": {
+    "requires_artifact_digest": true,
+    "requires_report_digest": true,
+    "requires_owner": true,
+    "requires_expiry": true,
+    "max_approval_days": 30,
+    "production_permission_requires_second_approver": true
+  }
+}

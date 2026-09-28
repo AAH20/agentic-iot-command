@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "$#" -ne 1 || "$1" != "--stdio" ]]; then
+  echo "BLOCK: this gateway accepts only its fixed stdio protocol" >&2
+  exit 64
+fi
+
+export A2Z_APPROVAL_TRUST_DIR=/etc/a2z-control-plane/approval-trust
+exec /usr/bin/python3 /opt/a2z-control-plane/scripts/mcp_goal_journal.py \
+  --config /etc/a2z-control-plane/goal-gateway.json

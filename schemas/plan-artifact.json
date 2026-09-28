@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/plan-artifact.json",
+  "title": "Offline Terraform/OpenTofu plan artifact",
+  "type": "object",
+  "required": ["format_version", "terraform_version", "resource_changes"],
+  "additionalProperties": false,
+  "properties": {
+    "format_version": {"type": "string", "minLength": 1},
+    "terraform_version": {"type": "string", "minLength": 1},
+    "resource_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["address", "change"],
+        "additionalProperties": false,
+        "properties": {
+          "address": {"type": "string", "minLength": 1},
+          "change": {
+            "type": "object",
+            "required": ["actions"],
+            "additionalProperties": false,
+            "properties": {
+              "actions": {"type": "array", "items": {"enum": ["create", "update", "delete", "read"]}, "minItems": 1}
+            }
+          }
+        }
+      }
+    }
+  }
+}

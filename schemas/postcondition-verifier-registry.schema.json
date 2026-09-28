@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2z.example/schemas/postcondition-verifier-registry.schema.json",
+  "title": "A2Z Postcondition Verifier Identity Registry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "identities"],
+  "properties": {
+    "schema_version": {"const": "a2z-postcondition-verifier-registry-v1"},
+    "identities": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "spiffe_id",
+          "verifier_id",
+          "tenant_id",
+          "certificate_sha256",
+          "target_ids",
+          "operation_ids",
+          "environments"
+        ],
+        "properties": {
+          "spiffe_id": {"type": "string", "pattern": "^spiffe://[^\\s]+$", "maxLength": 512},
+          "verifier_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+          "tenant_id": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"},
+          "certificate_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "target_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 500,
+            "uniqueItems": true,
+            "items": {"type": "string", "minLength": 1, "maxLength": 512, "not": {"const": "*"}}
+          },
+          "operation_ids": {
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 500,
+            "uniqueItems": true,
+            "items": {"type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$"}
+          },
+          "environments": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {"enum": ["lab", "development", "staging"]}
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+name: policy-contract-gate
+
+on:
+  pull_request:
+    paths:
+      - 'policies/**'
+      - 'schemas/**'
+      - 'src/control_plane_core/**'
+      - 'scripts/validate-policies.sh'
+      - 'tests/unit/**'
+
+permissions:
+  contents: read
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: ./scripts/validate-policies.sh
+      - run: PYTHONPATH=src python -m unittest discover -s tests/unit -v

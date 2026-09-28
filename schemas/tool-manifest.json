@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/tool-manifest.json",
+  "title": "Agent tool manifest",
+  "type": "object",
+  "required": ["tool_id", "capability", "read_only", "network", "credentials", "side_effects"],
+  "additionalProperties": false,
+  "properties": {
+    "tool_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+    "capability": {"type": "string", "minLength": 1},
+    "read_only": {"type": "boolean"},
+    "network": {"type": "boolean"},
+    "credentials": {"type": "boolean"},
+    "side_effects": {"type": "boolean"}
+  }
+}

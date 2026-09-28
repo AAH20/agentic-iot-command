@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/post-change-verification.json",
+  "title": "Post-change verification report",
+  "type": "object",
+  "required": ["verification_id", "receipt_id", "tenant_id", "resource_id", "verified", "checks", "rollback_required", "execution_permitted", "credentials_issued", "network_calls"],
+  "additionalProperties": false,
+  "properties": {
+    "verification_id": {"type": "string", "format": "uuid"},
+    "receipt_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "resource_id": {"type": "string", "minLength": 1},
+    "verified": {"type": "boolean"},
+    "checks": {"type": "array", "items": {"type": "string"}},
+    "rollback_required": {"type": "boolean"},
+    "execution_permitted": {"const": false},
+    "credentials_issued": {"const": false},
+    "network_calls": {"const": 0}
+  }
+}

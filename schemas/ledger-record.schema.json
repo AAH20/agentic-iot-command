@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/ledger-record.schema.json",
+  "title": "A2Z append-only ledger record",
+  "type": "object",
+  "required": ["record_version", "record_id", "tenant_id", "sequence", "appended_at", "previous_record_sha256", "evidence_sha256", "evidence", "record_sha256"],
+  "additionalProperties": false,
+  "properties": {
+    "record_version": {"const": "ledger-record-v1"},
+    "record_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "sequence": {"type": "integer", "minimum": 1},
+    "appended_at": {"type": "string", "format": "date-time"},
+    "previous_record_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+    "evidence_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "evidence": {"type": "object"},
+    "record_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

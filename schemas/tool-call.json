@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/tool-call.json",
+  "title": "Agent tool call authorization request",
+  "type": "object",
+  "required": ["call_id", "agent_id", "tenant_id", "tool_id", "target", "mode", "capability", "arguments"],
+  "additionalProperties": false,
+  "properties": {
+    "call_id": {"type": "string", "format": "uuid"},
+    "agent_id": {"type": "string", "minLength": 1},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "tool_id": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "mode": {"enum": ["observe", "plan", "mutate"]},
+    "capability": {"type": "string", "minLength": 1},
+    "arguments": {"type": "object"},
+    "approval_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}
+  }
+}

@@ -1,0 +1,37 @@
+[Unit]
+Description=A2Z exact-scope Ed25519 execution-grant signer
+Requires=a2z-grant-signer.socket
+After=a2z-grant-signer.socket
+
+[Service]
+Type=simple
+User=a2z-grant-signer
+Group=a2z-grant-signer
+WorkingDirectory=/opt/a2z-grant-signer
+Environment=PYTHONPATH=/opt/a2z-grant-signer/src
+ExecStart=/usr/bin/python3 /opt/a2z-grant-signer/scripts/grant-signer-server.py --config /etc/a2z-grant-signer/config.json
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+ProcSubset=pid
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX
+ReadOnlyPaths=/etc/a2z-grant-signer
+StandardOutput=journal
+StandardError=journal

@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.example/schemas/impact-assessment.schema.json",
+  "title": "Task- and plan-bound signed infrastructure impact assessment",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["assessment", "signature"],
+  "properties": {
+    "assessment": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "assessment_id", "tenant_id", "task_id", "operation_id", "target_ids", "environment", "plan_digest", "affected_resource_count", "estimated_cost_microusd", "source_id", "generated_at", "expires_at"],
+      "properties": {
+        "schema_version": {"const": "a2z-impact-assessment-v1"},
+        "assessment_id": {"type": "string", "format": "uuid"},
+        "tenant_id": {"type": "string", "minLength": 1, "maxLength": 256, "not": {"const": "*"}},
+        "task_id": {"type": "string", "format": "uuid"},
+        "operation_id": {"type": "string", "minLength": 1, "maxLength": 256, "not": {"const": "*"}},
+        "target_ids": {"type": "array", "minItems": 1, "maxItems": 500, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 256, "not": {"const": "*"}}},
+        "environment": {"enum": ["lab", "development", "staging"]},
+        "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "affected_resource_count": {"type": "integer", "minimum": 0, "maximum": 1000000},
+        "estimated_cost_microusd": {"type": "integer", "minimum": 0, "maximum": 1000000000000},
+        "source_id": {"type": "string", "minLength": 1, "maxLength": 256, "not": {"const": "*"}},
+        "generated_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "key_id", "signature_base64"],
+      "properties": {
+        "algorithm": {"const": "ed25519"},
+        "key_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$"},
+        "signature_base64": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

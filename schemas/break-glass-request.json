@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/break-glass-request.json",
+  "title": "Break-glass request",
+  "type": "object",
+  "required": ["request_id", "tenant_id", "requester_id", "target", "reason", "approver_ids", "expires_in_seconds", "post_review_required"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "requester_id": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "reason": {"type": "string", "minLength": 1},
+    "approver_ids": {"type": "array", "items": {"type": "string"}, "minItems": 2, "uniqueItems": true},
+    "expires_in_seconds": {"type": "integer", "minimum": 1, "maximum": 900},
+    "post_review_required": {"const": true}
+  }
+}

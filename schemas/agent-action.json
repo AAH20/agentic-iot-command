@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/agent-action.json",
+  "title": "Agent action request",
+  "type": "object",
+  "required": ["action_id", "agent_id", "intent", "target", "capabilities", "mode"],
+  "additionalProperties": false,
+  "properties": {
+    "action_id": {"type": "string", "format": "uuid"},
+    "agent_id": {"type": "string", "minLength": 1},
+    "intent": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "mode": {"enum": ["observe", "plan", "mutate"]},
+    "tenant_id": {"type": "string"}
+  }
+}

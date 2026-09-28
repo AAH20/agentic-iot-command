@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/evidence-envelope.schema.json",
+  "title": "A2Z evidence envelope",
+  "type": "object",
+  "required": ["envelope_id", "tenant_id", "schema_version", "event_type", "collected_at", "collector", "integrity", "payload"],
+  "additionalProperties": false,
+  "properties": {
+    "envelope_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "schema_version": {"const": "evidence-envelope-v1"},
+    "event_type": {"type": "string", "minLength": 1},
+    "collected_at": {"type": "string", "format": "date-time"},
+    "collector": {"type": "string", "minLength": 1},
+    "integrity": {
+      "type": "object",
+      "required": ["algorithm", "payload_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {"const": "sha256"},
+        "payload_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "payload": {"type": "object"}
+  }
+}

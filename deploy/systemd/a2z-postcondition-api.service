@@ -1,0 +1,42 @@
+[Unit]
+Description=A2Z verifier-only postcondition journal API
+After=network.target
+
+[Service]
+Type=simple
+User=a2z-control
+Group=a2z-control
+WorkingDirectory=/opt/a2z-postcondition-api
+Environment=PYTHONPATH=/opt/a2z-postcondition-api/src
+ExecStart=/usr/bin/python3 /opt/a2z-postcondition-api/scripts/postcondition-api-server.py --config /etc/a2z-control-plane/postcondition-api.json
+Restart=on-failure
+RestartSec=3
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+PrivateDevices=true
+ProtectSystem=strict
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectClock=true
+ProtectHostname=true
+ProtectProc=invisible
+ProcSubset=pid
+RestrictSUIDSGID=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
+SystemCallArchitectures=native
+CapabilityBoundingSet=
+AmbientCapabilities=
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+IPAddressDeny=any
+IPAddressAllow=127.0.0.0/8
+IPAddressAllow=::1/128
+ReadWritePaths=/var/lib/a2z-control-plane
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

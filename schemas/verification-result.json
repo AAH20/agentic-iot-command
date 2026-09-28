@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/verification-result.json",
+  "title": "Verification result",
+  "type": "object",
+  "required": ["verification_id", "receipt_id", "verified", "checks", "rollback_available"],
+  "additionalProperties": false,
+  "properties": {
+    "verification_id": {"type": "string", "format": "uuid"},
+    "receipt_id": {"type": "string", "format": "uuid"},
+    "verified": {"type": "boolean"},
+    "checks": {"type": "array", "items": {"type": "string"}},
+    "rollback_available": {"type": "boolean"}
+  }
+}

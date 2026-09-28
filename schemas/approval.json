@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/approval.json",
+  "title": "Signed action approval envelope",
+  "type": "object",
+  "required": ["approval", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "approval": {
+      "type": "object",
+      "required": ["approval_id", "request_id", "approver_id", "approved_at", "expires_at", "scope"],
+      "additionalProperties": false,
+      "properties": {
+        "approval_id": {"type": "string", "format": "uuid"},
+        "request_id": {"type": "string", "format": "uuid"},
+        "approver_id": {"type": "string", "minLength": 1},
+        "approved_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "scope": {
+          "type": "object",
+          "required": ["tenant_id", "target", "action", "environment", "capabilities", "plan_id"],
+          "additionalProperties": false,
+          "properties": {
+            "tenant_id": {"type": "string", "minLength": 1},
+            "target": {"type": "string", "minLength": 1},
+            "action": {"type": "string", "minLength": 1},
+            "environment": {"enum": ["lab", "development", "staging", "production", "regulated"]},
+            "capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+            "plan_id": {"type": "string", "format": "uuid"}
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["algorithm", "key_id", "signature_base64"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {"const": "ed25519"},
+        "key_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+        "signature_base64": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

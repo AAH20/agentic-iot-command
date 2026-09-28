@@ -1,0 +1,3 @@
+# Optional PostgreSQL runtime. Keep the driver and pool exact-pinned.
+psycopg[binary]==3.3.6
+psycopg_pool==3.3.3

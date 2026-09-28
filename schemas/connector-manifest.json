@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/connector-manifest.json",
+  "title": "Connector manifest",
+  "type": "object",
+  "required": ["connector_id", "domain", "version", "capabilities", "network_destinations", "credential_requirements"],
+  "additionalProperties": false,
+  "properties": {
+    "connector_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+    "domain": {"type": "string", "minLength": 1},
+    "version": {"type": "string", "minLength": 1},
+    "capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "network_destinations": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "credential_requirements": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "read_only_by_default": {"const": true}
+  }
+}

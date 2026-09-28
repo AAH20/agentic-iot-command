@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2z.example/schemas/worker-api-config.schema.json",
+  "title": "A2Z lab worker API configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "database_path", "runner_registry_path", "approval_trust_directory",
+    "runner_trust_directory", "grant_trust_directory", "autonomy_trust_directory",
+    "impact_trust_directory", "execution_control_path", "signer_socket_path", "signer_uid",
+    "signer_key_id", "tls_certificate", "tls_private_key", "client_ca", "bind_address", "port"
+  ],
+  "properties": {
+    "schema_version": { "const": "a2z-worker-api-config-v1" },
+    "database_path": { "const": "/var/lib/a2z-control-plane/goals.sqlite3" },
+    "runner_registry_path": { "const": "/etc/a2z-control-plane/runner-identities.json" },
+    "approval_trust_directory": { "const": "/etc/a2z-control-plane/approval-trust" },
+    "runner_trust_directory": { "const": "/etc/a2z-control-plane/runner-trust" },
+    "grant_trust_directory": { "const": "/etc/a2z-control-plane/execution-grant-trust" },
+    "autonomy_trust_directory": { "const": "/etc/a2z-control-plane/autonomy-profile-trust" },
+    "impact_trust_directory": { "const": "/etc/a2z-control-plane/impact-assessment-trust" },
+    "execution_control_path": { "const": "/etc/a2z-control-plane/execution-control.json" },
+    "signer_socket_path": { "const": "/run/a2z-grant-signer/issuer.sock" },
+    "signer_uid": { "type": "integer", "minimum": 1 },
+    "signer_key_id": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$" },
+    "tls_certificate": { "const": "/etc/a2z-control-plane/worker-tls/worker-api.crt" },
+    "tls_private_key": { "const": "/etc/a2z-control-plane/worker-tls/worker-api.key" },
+    "client_ca": { "const": "/etc/a2z-control-plane/worker-tls/runner-client-ca.crt" },
+    "bind_address": { "const": "127.0.0.1" },
+    "port": { "const": 9443 }
+  }
+}

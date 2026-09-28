@@ -1,0 +1,12 @@
+{
+  "schema_version": "a2z-grant-signer-config-v1",
+  "socket_path": "/run/a2z-grant-signer/issuer.sock",
+  "private_key": "/etc/a2z-grant-signer/keys/issuer.pem",
+  "key_id": "lab-issuer-v1",
+  "api_uid": 991,
+  "tenant_id": "lab-tenant",
+  "runner_id": "runner-vbox-demo-1",
+  "target_ids": ["00000000-0000-4000-8000-000000000001"],
+  "operation_ids": ["virtualbox.vm.set_demo_description"],
+  "max_runtime_seconds": 120
+}

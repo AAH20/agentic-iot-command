@@ -1,0 +1,31 @@
+{
+  "schema_version": "autonomy-profile-v1",
+  "profile_id": "lab-default",
+  "tenant_id": "lab",
+  "enabled": false,
+  "issued_at": "2026-09-23T00:00:00Z",
+  "expires_at": "2026-10-22T00:00:00Z",
+  "max_concurrency": 1,
+  "max_total_targets": 1,
+  "max_affected_resources": 1,
+  "max_estimated_cost_microusd": 0,
+  "maintenance_windows": [],
+  "rules": [],
+  "denied_actions": [
+    "shell.exec",
+    "command.run",
+    "virtualbox.vm.delete",
+    "virtualbox.vm.modify",
+    "virtualbox.vm.snapshot.restore",
+    "identity.modify",
+    "network.modify",
+    "credential.issue"
+  ],
+  "defaults": {
+    "unknown_action": "deny",
+    "non_allowlisted_action": "approval_required",
+    "high_impact_action": "approval_required",
+    "production_action": "approval_required",
+    "regulated_action": "deny"
+  }
+}

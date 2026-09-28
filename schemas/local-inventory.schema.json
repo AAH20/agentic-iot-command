@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/local-inventory.schema.json",
+  "title": "Read-only local host inventory payload",
+  "type": "object",
+  "required": ["observation_version", "collection_mode", "collected_at", "host", "tools", "safety"],
+  "additionalProperties": false,
+  "properties": {
+    "observation_version": {"const": "local-inventory-v1"},
+    "collection_mode": {"const": "read-only"},
+    "collected_at": {"type": "string", "format": "date-time"},
+    "host": {
+      "type": "object",
+      "required": ["os_family", "os_release", "architecture", "kernel", "hostname_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "os_family": {"type": "string"},
+        "os_release": {"type": "string"},
+        "architecture": {"type": "string"},
+        "kernel": {"type": "string"},
+        "hostname_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      }
+    },
+    "tools": {"type": "object", "additionalProperties": {"type": "boolean"}},
+    "safety": {
+      "type": "object",
+      "required": ["external_commands_invoked", "network_calls", "credentials_used"],
+      "additionalProperties": false,
+      "properties": {
+        "external_commands_invoked": {"const": false},
+        "network_calls": {"const": 0},
+        "credentials_used": {"const": false}
+      }
+    }
+  }
+}

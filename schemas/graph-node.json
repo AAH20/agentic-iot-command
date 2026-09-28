@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/graph-node.json",
+  "title": "Tenant-scoped relationship graph node",
+  "type": "object",
+  "required": ["node_id", "tenant_id", "kind", "attributes"],
+  "additionalProperties": false,
+  "properties": {
+    "node_id": {"type": "string", "minLength": 1},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "kind": {"type": "string", "minLength": 1},
+    "attributes": {"type": "object"}
+  }
+}

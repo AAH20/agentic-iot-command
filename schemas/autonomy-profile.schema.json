@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.example/schemas/autonomy-profile.schema.json",
+  "title": "Governed Autonomy Profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "profile_id",
+    "tenant_id",
+    "enabled",
+    "issued_at",
+    "expires_at",
+    "max_concurrency",
+    "max_total_targets",
+    "max_affected_resources",
+    "max_estimated_cost_microusd",
+    "rules",
+    "denied_actions",
+    "defaults"
+  ],
+  "properties": {
+    "schema_version": {"const": "autonomy-profile-v1"},
+    "profile_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "tenant_id": {"type": "string", "minLength": 1, "maxLength": 128},
+    "enabled": {"type": "boolean"},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "max_concurrency": {"type": "integer", "minimum": 1, "maximum": 32},
+    "max_total_targets": {"type": "integer", "minimum": 1, "maximum": 500},
+    "max_affected_resources": {"type": "integer", "minimum": 1, "maximum": 1000000},
+    "max_estimated_cost_microusd": {"type": "integer", "minimum": 0, "maximum": 1000000000000},
+    "maintenance_windows": {
+      "type": "array",
+      "maxItems": 100,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["window_id", "action_id", "target_ids", "environments", "starts_at", "ends_at"],
+        "properties": {
+          "window_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$"},
+          "action_id": {"type": "string", "minLength": 1, "maxLength": 128, "not": {"enum": ["*", "shell.exec", "command.run"]}},
+          "target_ids": {"type": "array", "minItems": 1, "maxItems": 500, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 256, "not": {"const": "*"}}},
+          "environments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["lab", "development", "staging"]}},
+          "starts_at": {"type": "string", "format": "date-time"},
+          "ends_at": {"type": "string", "format": "date-time"}
+        }
+      }
+    },
+    "rules": {
+      "type": "array",
+      "maxItems": 500,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["action_id", "target_ids", "environments", "max_targets_per_run", "max_batch_size", "max_affected_resources", "max_estimated_cost_microusd", "enabled"],
+        "properties": {
+          "action_id": {"type": "string", "minLength": 1, "maxLength": 128, "not": {"enum": ["*", "shell.exec", "command.run"]}},
+          "target_ids": {"type": "array", "minItems": 1, "maxItems": 500, "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 256}},
+          "environments": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["lab", "development", "staging"]}},
+          "max_targets_per_run": {"type": "integer", "minimum": 1, "maximum": 500},
+          "max_batch_size": {"type": "integer", "minimum": 1, "maximum": 32},
+          "max_affected_resources": {"type": "integer", "minimum": 1, "maximum": 100000},
+          "max_estimated_cost_microusd": {"type": "integer", "minimum": 0, "maximum": 1000000000000},
+          "enabled": {"type": "boolean"}
+        }
+      }
+    },
+    "denied_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 128}},
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["unknown_action", "non_allowlisted_action", "high_impact_action", "production_action", "regulated_action"],
+      "properties": {
+        "unknown_action": {"const": "deny"},
+        "non_allowlisted_action": {"const": "approval_required"},
+        "high_impact_action": {"const": "approval_required"},
+        "production_action": {"const": "approval_required"},
+        "regulated_action": {"const": "deny"}
+      }
+    }
+  }
+}

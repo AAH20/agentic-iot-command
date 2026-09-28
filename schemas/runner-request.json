@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/runner-request.json",
+  "title": "Execution runner request",
+  "type": "object",
+  "required": ["request_id", "plan_id", "runner_type", "environment", "capability_token_id", "simulation", "network_allowed", "credentials_allowed"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {"type": "string", "format": "uuid"},
+    "plan_id": {"type": "string", "format": "uuid"},
+    "runner_type": {"enum": ["sandbox", "terraform", "kubernetes", "ssh", "rdp", "cloud-cli"]},
+    "environment": {"enum": ["lab", "development"]},
+    "capability_token_id": {"type": "string", "format": "uuid"},
+    "simulation": {"const": true},
+    "network_allowed": {"const": false},
+    "credentials_allowed": {"const": false}
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/workload-identity-request.json",
+  "title": "Workload identity request",
+  "type": "object",
+  "required": ["request_id", "agent_id", "tenant_id", "target", "capabilities", "environment", "expires_in_seconds"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {"type": "string", "format": "uuid"},
+    "agent_id": {"type": "string", "minLength": 1},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "capabilities": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+    "environment": {"enum": ["lab", "development", "staging", "production", "regulated"]},
+    "expires_in_seconds": {"type": "integer", "minimum": 1, "maximum": 900}
+  }
+}

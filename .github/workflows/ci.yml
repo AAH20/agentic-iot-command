@@ -1,0 +1,37 @@
+name: control-plane-ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  local-core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Validate policy baseline
+        run: ./scripts/validate-policies.sh
+      - name: Validate JSON contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m json.tool architecture-manifest.json >/dev/null
+          python -m json.tool policies/skill-gate.json >/dev/null
+          python -m json.tool policies/runtime-defaults.json >/dev/null
+          for schema in schemas/*.json; do python -m json.tool "$schema" >/dev/null; done
+      - name: Run local policy tests
+        env:
+          PYTHONPATH: src
+        run: python -m unittest discover -s tests/unit -v
+      - name: Validate shell syntax
+        run: bash -n scripts/*.sh

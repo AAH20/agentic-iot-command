@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/agent-manifest.json",
+  "title": "Agent manifest",
+  "type": "object",
+  "required": ["agent_id", "tenant_id", "role", "allowed_tools", "artifact_digests", "signature_verified", "read_only_by_default"],
+  "additionalProperties": false,
+  "properties": {
+    "agent_id": {"type": "string", "pattern": "^[a-z0-9._-]+$"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "role": {"type": "string", "minLength": 1},
+    "allowed_tools": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "artifact_digests": {"type": "array", "items": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}, "uniqueItems": true},
+    "signature_verified": {"const": true},
+    "read_only_by_default": {"const": true}
+  }
+}

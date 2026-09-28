@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/skill-approval.schema.json",
+  "title": "Skill installation approval",
+  "type": "object",
+  "required": ["approval", "signature"],
+  "additionalProperties": false,
+  "properties": {
+    "approval": {
+      "type": "object",
+      "required": ["artifact_id", "report_sha256", "owner", "approved_at", "expires_at", "safe_to_install"],
+      "additionalProperties": false,
+      "properties": {
+        "artifact_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+        "report_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "owner": {"type": "string", "minLength": 1},
+        "approved_at": {"type": "string", "format": "date-time"},
+        "expires_at": {"type": "string", "format": "date-time"},
+        "safe_to_install": {"const": true},
+        "review": {
+          "type": "object",
+          "required": ["notes", "findings", "reference_exceptions_sha256"],
+          "additionalProperties": false,
+          "properties": {
+            "notes": {"type": "string", "minLength": 20},
+            "findings": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "required": ["finding_id", "severity", "mitigation"],
+                "additionalProperties": false,
+                "properties": {
+                  "finding_id": {"type": "string", "minLength": 1},
+                  "severity": {"enum": ["MEDIUM"]},
+                  "mitigation": {"type": "string", "minLength": 20}
+                }
+              }
+            },
+            "reference_exceptions_sha256": {
+              "oneOf": [
+                {"type": "null"},
+                {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+              ]
+            }
+          }
+        }
+      }
+    },
+    "signature": {
+      "type": "object",
+      "required": ["algorithm", "key_id", "signature_base64"],
+      "additionalProperties": false,
+      "properties": {
+        "algorithm": {"const": "ed25519"},
+        "key_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+        "signature_base64": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

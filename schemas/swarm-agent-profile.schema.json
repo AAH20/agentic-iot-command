@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/swarm-agent-profile.schema.json",
+  "title": "Governed swarm agent runtime profile",
+  "description": "Declarative runtime constraints for an agent. This profile is not an authorization decision and grants no infrastructure capability by itself.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile_id", "version", "tenant_id", "agent_role", "allowed_skill_digests", "allowed_tool_ids", "model_route_policy_id", "data_classification_ceiling", "target_scope_ids", "autonomy_profile_id", "runtime_isolation_profile_id", "delegation", "budgets", "computer_use"],
+  "properties": {
+    "profile_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"},
+    "version": {"type": "integer", "minimum": 1},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "agent_role": {"type": "string", "minLength": 1},
+    "allowed_skill_digests": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}},
+    "allowed_tool_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]{1,127}$"}},
+    "model_route_policy_id": {"type": "string", "minLength": 1},
+    "data_classification_ceiling": {"enum": ["public", "internal", "confidential", "restricted"]},
+    "target_scope_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+    "autonomy_profile_id": {"type": "string", "minLength": 1},
+    "runtime_isolation_profile_id": {"type": "string", "minLength": 1},
+    "delegation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["allowed", "max_depth", "max_children", "inheritance"],
+      "properties": {
+        "allowed": {"type": "boolean"},
+        "max_depth": {"type": "integer", "minimum": 0, "maximum": 8},
+        "max_children": {"type": "integer", "minimum": 0, "maximum": 64},
+        "inheritance": {"const": "intersection_only"}
+      }
+    },
+    "budgets": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_runtime_seconds", "max_model_calls", "max_tool_calls", "max_concurrency", "max_cost_microusd"],
+      "properties": {
+        "max_runtime_seconds": {"type": "integer", "minimum": 1},
+        "max_model_calls": {"type": "integer", "minimum": 0},
+        "max_tool_calls": {"type": "integer", "minimum": 0},
+        "max_concurrency": {"type": "integer", "minimum": 1},
+        "max_cost_microusd": {"type": "integer", "minimum": 0}
+      }
+    },
+    "computer_use": {
+      "type": "object", "additionalProperties": false,
+      "required": ["enabled", "mode", "allowed_application_ids", "human_confirm_actions"],
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "mode": {"enum": ["disabled", "read_only", "human_confirmed"]},
+        "allowed_application_ids": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}},
+        "human_confirm_actions": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1}}
+      }
+    }
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"computer_use": {"properties": {"enabled": {"const": false}}}}, "required": ["computer_use"]},
+      "then": {"properties": {"computer_use": {"properties": {"mode": {"const": "disabled"}}}}}
+    }
+  ]
+}

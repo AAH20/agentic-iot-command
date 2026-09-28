@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/plan-evaluation.json",
+  "title": "Offline plan evaluation",
+  "type": "object",
+  "required": ["evaluation_id", "plan_sha256", "decision", "resource_count", "destructive_count", "execution_permitted"],
+  "additionalProperties": false,
+  "properties": {
+    "evaluation_id": {"type": "string", "format": "uuid"},
+    "plan_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "decision": {"enum": ["allow", "deny", "conditional"]},
+    "resource_count": {"type": "integer", "minimum": 0},
+    "destructive_count": {"type": "integer", "minimum": 0},
+    "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "execution_permitted": {"const": false}
+  }
+}

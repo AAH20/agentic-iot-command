@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/session-event.json",
+  "title": "Privileged session event",
+  "type": "object",
+  "required": ["event_id", "session_id", "event_type", "tenant_id", "identity_id", "target", "occurred_at", "credentials_exposed"],
+  "additionalProperties": false,
+  "properties": {
+    "event_id": {"type": "string", "format": "uuid"},
+    "session_id": {"type": "string", "format": "uuid"},
+    "event_type": {"enum": ["opened", "closed", "denied"]},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "identity_id": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "occurred_at": {"type": "string", "format": "date-time"},
+    "credentials_exposed": {"const": false},
+    "reason_codes": {"type": "array", "items": {"type": "string"}}
+  }
+}

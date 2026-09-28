@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/capability-token.json",
+  "title": "Scoped runner capability token",
+  "type": "object",
+  "required": ["token_id", "plan_id", "scope", "issued_at", "expires_at", "environment", "simulation", "secret_material"],
+  "additionalProperties": false,
+  "properties": {
+    "token_id": {"type": "string", "format": "uuid"},
+    "plan_id": {"type": "string", "format": "uuid"},
+    "scope": {"type": "array", "items": {"type": "string"}, "minItems": 1, "uniqueItems": true},
+    "issued_at": {"type": "string", "format": "date-time"},
+    "expires_at": {"type": "string", "format": "date-time"},
+    "environment": {"enum": ["lab", "development"]},
+    "simulation": {"const": true},
+    "secret_material": {"const": false}
+  }
+}

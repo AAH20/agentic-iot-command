@@ -1,0 +1,7 @@
+{
+  "ssh_alias": "linux-ops-01",
+  "ssh_login": "a2z-control",
+  "identity_file": "/Users/REPLACE_WITH_YOUR_MAC_USERNAME/.ssh/a2z-control",
+  "known_hosts_file": "/Users/REPLACE_WITH_YOUR_MAC_USERNAME/.ssh/a2z-control_known_hosts",
+  "remote_gateway": "/usr/local/libexec/a2z-goal-gateway"
+}

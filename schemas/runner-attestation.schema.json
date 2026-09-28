@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.example/schemas/runner-attestation.schema.json",
+  "title": "Signed runner attestation",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["attestation", "signature"],
+  "properties": {
+    "attestation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["schema_version", "receipt_id", "task_id", "tenant_id", "target_id", "operation_id", "environment", "plan_digest", "lease_generation", "runner_id", "started_at", "completed_at", "outcome", "changed", "pre_state_sha256", "post_state_sha256", "network_calls", "credentials_issued"],
+      "properties": {
+        "schema_version": {"const": "a2z-runner-attestation-v1"},
+        "receipt_id": {"type": "string", "format": "uuid"},
+        "task_id": {"type": "string", "format": "uuid"},
+        "tenant_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "target_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "operation_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "environment": {"enum": ["lab", "development", "staging"]},
+        "plan_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "lease_generation": {"type": "integer", "minimum": 1},
+        "runner_id": {"type": "string", "minLength": 1, "maxLength": 256},
+        "started_at": {"type": "string", "format": "date-time"},
+        "completed_at": {"type": "string", "format": "date-time"},
+        "outcome": {"enum": ["succeeded", "already_satisfied", "failed", "unknown"]},
+        "changed": {"type": "boolean"},
+        "pre_state_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "post_state_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "network_calls": {"type": "integer", "minimum": 0, "maximum": 10000},
+        "credentials_issued": {"type": "boolean"}
+      }
+    },
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "key_id", "signature_base64"],
+      "properties": {
+        "algorithm": {"const": "ed25519"},
+        "key_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$"},
+        "signature_base64": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

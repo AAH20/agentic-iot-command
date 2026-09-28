@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/change-plan.json",
+  "title": "Change plan",
+  "type": "object",
+  "required": ["plan_id", "request_id", "decision", "steps", "rollback", "blast_radius"],
+  "additionalProperties": false,
+  "properties": {
+    "plan_id": {"type": "string", "format": "uuid"},
+    "request_id": {"type": "string", "format": "uuid"},
+    "decision": {"enum": ["allow", "deny", "conditional"]},
+    "reason_codes": {"type": "array", "items": {"type": "string"}},
+    "steps": {"type": "array", "items": {"type": "string"}},
+    "rollback": {"type": "array", "items": {"type": "string"}},
+    "blast_radius": {"enum": ["none", "low", "medium", "high", "unknown"]},
+    "execution_permitted": {"type": "boolean"}
+  }
+}

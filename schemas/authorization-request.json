@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/authorization-request.json",
+  "title": "Authorization request",
+  "type": "object",
+  "required": ["request_id", "actor_id", "action", "target", "environment", "capabilities", "mode", "approvals"],
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {"type": "string", "format": "uuid"},
+    "actor_id": {"type": "string", "minLength": 1},
+    "action": {"type": "string", "minLength": 1},
+    "target": {"type": "string", "minLength": 1},
+    "environment": {"enum": ["lab", "development", "staging", "production", "regulated"]},
+    "capabilities": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "mode": {"enum": ["observe", "plan", "mutate"]},
+    "approvals": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "second_approver": {"type": "boolean", "default": false},
+    "reason": {"type": "string"}
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2z.example/schemas/grant-signer-config.schema.json",
+  "title": "A2Z local execution-grant signer policy",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "socket_path", "private_key", "key_id", "api_uid",
+    "tenant_id", "runner_id", "target_ids", "operation_ids", "max_runtime_seconds"
+  ],
+  "properties": {
+    "schema_version": { "const": "a2z-grant-signer-config-v1" },
+    "socket_path": { "const": "/run/a2z-grant-signer/issuer.sock" },
+    "private_key": { "const": "/etc/a2z-grant-signer/keys/issuer.pem" },
+    "key_id": { "type": "string", "pattern": "^[A-Za-z0-9._-]{1,128}$" },
+    "api_uid": { "type": "integer", "minimum": 1 },
+    "tenant_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$" },
+    "runner_id": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$" },
+    "target_ids": {
+      "type": "array", "minItems": 1, "maxItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$" }
+    },
+    "operation_ids": {
+      "type": "array", "minItems": 1, "maxItems": 1, "uniqueItems": true,
+      "items": { "type": "string", "pattern": "^[A-Za-z0-9][A-Za-z0-9_.:-]{0,127}$" }
+    },
+    "max_runtime_seconds": { "type": "integer", "minimum": 1, "maximum": 300 }
+  }
+}

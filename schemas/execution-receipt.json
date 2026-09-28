@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/execution-receipt.json",
+  "title": "Execution receipt",
+  "type": "object",
+  "required": ["receipt_id", "plan_id", "runner_id", "simulation", "credentials_issued", "network_calls", "status"],
+  "additionalProperties": false,
+  "properties": {
+    "receipt_id": {"type": "string", "format": "uuid"},
+    "plan_id": {"type": "string", "format": "uuid"},
+    "runner_id": {"type": "string", "minLength": 1},
+    "simulation": {"const": true},
+    "credentials_issued": {"const": false},
+    "network_calls": {"const": 0},
+    "status": {"const": "dispatched"},
+    "tenant_id": {"type": "string"},
+    "resource_id": {"type": "string"}
+  }
+}

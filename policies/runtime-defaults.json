@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "default_profile": "isolated-runner",
+  "profiles": {
+    "quarantine": {
+      "network": "controlled-source-only",
+      "filesystem_read": ["declared_artifact"],
+      "filesystem_write": ["quarantine_root"],
+      "processes": [],
+      "secrets": "deny",
+      "cloud_credentials": "deny",
+      "ssh_agent_forwarding": "deny",
+      "browser_profile": "deny",
+      "rdp": "deny",
+      "production": "deny"
+    },
+    "isolated-runner": {
+      "network": "deny",
+      "filesystem_read": ["declared_workspace"],
+      "filesystem_write": ["declared_workspace"],
+      "processes": ["declared_binaries"],
+      "secrets": "deny",
+      "cloud_credentials": "deny",
+      "ssh_agent_forwarding": "deny",
+      "browser_profile": "deny",
+      "rdp": "deny",
+      "production": "deny"
+    },
+    "expanded": {
+      "requires_separate_approval": true,
+      "inherits": "isolated-runner"
+    }
+  },
+  "non_inferable_permissions": [
+    "network",
+    "filesystem_write",
+    "processes",
+    "secrets",
+    "cloud_credentials",
+    "ssh_agent_forwarding",
+    "browser_profile",
+    "rdp",
+    "production"
+  ]
+}

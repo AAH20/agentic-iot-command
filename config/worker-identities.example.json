@@ -1,0 +1,14 @@
+{
+  "schema_version": "a2z-runner-certificate-registry-v1",
+  "identities": [
+    {
+      "spiffe_id": "spiffe://a2z.example/tenant/lab-tenant/runner/runner-vbox-demo-1",
+      "tenant_id": "lab-tenant",
+      "runner_id": "runner-vbox-demo-1",
+      "certificate_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "target_ids": ["00000000-0000-4000-8000-000000000001"],
+      "operation_ids": ["virtualbox.vm.set_demo_description"],
+      "environments": ["lab"]
+    }
+  ]
+}

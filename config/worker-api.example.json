@@ -1,0 +1,19 @@
+{
+  "schema_version": "a2z-worker-api-config-v1",
+  "database_path": "/var/lib/a2z-control-plane/goals.sqlite3",
+  "runner_registry_path": "/etc/a2z-control-plane/runner-identities.json",
+  "approval_trust_directory": "/etc/a2z-control-plane/approval-trust",
+  "runner_trust_directory": "/etc/a2z-control-plane/runner-trust",
+  "grant_trust_directory": "/etc/a2z-control-plane/execution-grant-trust",
+  "autonomy_trust_directory": "/etc/a2z-control-plane/autonomy-profile-trust",
+  "impact_trust_directory": "/etc/a2z-control-plane/impact-assessment-trust",
+  "execution_control_path": "/etc/a2z-control-plane/execution-control.json",
+  "signer_socket_path": "/run/a2z-grant-signer/issuer.sock",
+  "signer_uid": 992,
+  "signer_key_id": "lab-issuer-v1",
+  "tls_certificate": "/etc/a2z-control-plane/worker-tls/worker-api.crt",
+  "tls_private_key": "/etc/a2z-control-plane/worker-tls/worker-api.key",
+  "client_ca": "/etc/a2z-control-plane/worker-tls/runner-client-ca.crt",
+  "bind_address": "127.0.0.1",
+  "port": 9443
+}

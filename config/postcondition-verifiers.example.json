@@ -1,0 +1,14 @@
+{
+  "schema_version": "a2z-postcondition-verifier-registry-v1",
+  "identities": [
+    {
+      "spiffe_id": "spiffe://a2z.example/tenant/lab-tenant/verifier/vbox-observer-1",
+      "verifier_id": "vbox-observer-1",
+      "tenant_id": "lab-tenant",
+      "certificate_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "target_ids": ["REPLACE_WITH_ONE_REVIEWED_VIRTUALBOX_UUID"],
+      "operation_ids": ["virtualbox.vm.set_demo_description"],
+      "environments": ["lab"]
+    }
+  ]
+}

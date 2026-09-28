@@ -1,0 +1,6 @@
+* @a2z-soc/security
+/policies/ @a2z-soc/security
+/schemas/ @a2z-soc/security @a2z-soc/platform
+/scripts/ @a2z-soc/security @a2z-soc/platform
+/services/ @a2z-soc/platform
+/connectors/ @a2z-soc/platform @a2z-soc/security

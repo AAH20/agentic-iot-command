@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/graph-edge.json",
+  "title": "Tenant-scoped relationship graph edge",
+  "type": "object",
+  "required": ["edge_id", "tenant_id", "source_id", "target_id", "relation", "attributes"],
+  "additionalProperties": false,
+  "properties": {
+    "edge_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "source_id": {"type": "string", "minLength": 1},
+    "target_id": {"type": "string", "minLength": 1},
+    "relation": {"type": "string", "minLength": 1},
+    "attributes": {"type": "object"}
+  }
+}

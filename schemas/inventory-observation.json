@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/inventory-observation.json",
+  "title": "Read-only inventory observation",
+  "type": "object",
+  "required": ["observation_id", "tenant_id", "resource_id", "resource_type", "environment", "source_connector", "observed_at", "read_only", "attributes"],
+  "additionalProperties": false,
+  "properties": {
+    "observation_id": {"type": "string", "format": "uuid"},
+    "tenant_id": {"type": "string", "minLength": 1},
+    "resource_id": {"type": "string", "minLength": 1},
+    "resource_type": {"type": "string", "minLength": 1},
+    "environment": {"enum": ["lab", "development", "staging", "production", "regulated"]},
+    "source_connector": {"type": "string", "minLength": 1},
+    "observed_at": {"type": "string", "format": "date-time"},
+    "read_only": {"const": true},
+    "attributes": {"type": "object"}
+  }
+}

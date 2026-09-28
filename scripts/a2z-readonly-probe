@@ -1,0 +1,159 @@
+#!/usr/bin/env python3
+"""Minimal unprivileged SSH stdio probe. Supports observation only."""
+
+from __future__ import annotations
+
+import json
+import os
+import platform
+import re
+import shutil
+import stat
+import subprocess
+import sys
+from pathlib import Path
+
+
+ALLOWED = {"host.summary", "systemd.health", "virtualbox.inventory"}
+MAX_INPUT = 4096
+UUID_LINE = re.compile(r'^"(.*)" \{([0-9a-fA-F-]{36})\}$')
+
+
+def trusted_vboxmanage() -> str | None:
+    candidate = shutil.which("VBoxManage", path="/usr/bin:/usr/local/bin:/opt/VirtualBox")
+    if candidate is None:
+        return None
+    try:
+        executable = Path(candidate).resolve(strict=True)
+    except OSError as exc:
+        raise PermissionError("VirtualBox executable could not be resolved") from exc
+    allowed_roots = (Path("/usr"), Path("/opt/VirtualBox"))
+    if not any(executable.is_relative_to(root) for root in allowed_roots):
+        raise PermissionError("VirtualBox executable is outside trusted system directories")
+    if not executable.is_file() or not os.access(executable, os.X_OK):
+        raise PermissionError("VirtualBox executable is not a regular executable file")
+    for component in (executable, *executable.parents):
+        info = component.stat()
+        if info.st_uid != 0 or stat.S_IMODE(info.st_mode) & 0o022:
+            raise PermissionError("VirtualBox executable path must be root-owned and non-writable by group/other")
+    return str(executable)
+
+
+def list_virtualbox_guests(operation: str) -> dict[str, dict[str, str]]:
+    executable = trusted_vboxmanage()
+    if executable is None:
+        return {}
+    result = subprocess.run(
+        [executable, "list", operation],
+        capture_output=True,
+        text=True,
+        timeout=15,
+        check=True,
+        env={"PATH": "/usr/bin:/usr/local/bin:/bin", "LANG": "C"},
+    )
+    guests: dict[str, dict[str, str]] = {}
+    for line in result.stdout.splitlines():
+        match = UUID_LINE.fullmatch(line.strip())
+        if match:
+            name, guest_uuid = match.groups()
+            guests[guest_uuid.lower()] = {"name": name[:256], "uuid": guest_uuid.lower()}
+    if len(guests) > 500:
+        raise ValueError("VirtualBox inventory exceeds the probe limit")
+    return guests
+
+
+def main() -> int:
+    raw = sys.stdin.buffer.read(MAX_INPUT + 1)
+    if len(raw) > MAX_INPUT:
+        return 2
+    try:
+        request = json.loads(raw)
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        return 2
+    if not isinstance(request, dict) or request.get("version") != 1:
+        return 2
+    operations = request.get("operations")
+    if not isinstance(operations, list) or not operations or any(op not in ALLOWED for op in operations):
+        return 2
+
+    observations = []
+    if "host.summary" in operations:
+        observations.append({
+            "operation": "host.summary",
+            "resource_type": "linux-host",
+            "attributes": {
+                "hostname": platform.node(),
+                "kernel": platform.release(),
+                "architecture": platform.machine(),
+                "distribution": platform.freedesktop_os_release().get("PRETTY_NAME", "unknown")
+                if hasattr(platform, "freedesktop_os_release") else "unknown",
+                "uid": os.getuid(),
+            },
+        })
+    if "systemd.health" in operations:
+        # Deliberately reports only a boolean and counts; no process arguments,
+        # journal contents, environment variables, or secret-bearing paths.
+        failed = 0
+        try:
+            with open("/run/systemd/system", "rb"):
+                pass
+            result = subprocess.run(
+                ["/usr/bin/systemctl", "--failed", "--no-legend", "--plain"],
+                capture_output=True,
+                text=True,
+                timeout=5,
+                check=False,
+                env={"PATH": "/usr/bin:/bin", "LANG": "C"},
+            )
+            if result.returncode not in (0, 1):
+                return 3
+            failed = min(1000, sum(1 for line in result.stdout.splitlines() if line.strip()))
+        except (FileNotFoundError, OSError, subprocess.TimeoutExpired):
+            return 3
+        observations.append({
+            "operation": "systemd.health",
+            "resource_type": "systemd-health",
+            "attributes": {"systemd_available": True, "failed_unit_count": failed},
+        })
+
+    if "virtualbox.inventory" in operations:
+        executable = trusted_vboxmanage()
+        if executable is None:
+            observations.append({
+                "operation": "virtualbox.inventory",
+                "resource_type": "virtualbox-host",
+                "attributes": {"virtualbox_available": False, "registered_vm_count": 0, "running_vm_count": 0},
+            })
+        else:
+            try:
+                registered = list_virtualbox_guests("vms")
+                running = list_virtualbox_guests("runningvms")
+            except (OSError, subprocess.SubprocessError, ValueError):
+                return 3
+            for guest_uuid, guest in sorted(registered.items()):
+                observations.append({
+                    "operation": "virtualbox.inventory",
+                    "resource_id": f"virtualbox:{guest_uuid}",
+                    "resource_type": "virtualbox-vm",
+                    "attributes": {
+                        "name": guest["name"],
+                        "uuid": guest_uuid,
+                        "power_state": "running" if guest_uuid in running else "powered_off_or_not_running",
+                    },
+                })
+            observations.append({
+                "operation": "virtualbox.inventory",
+                "resource_type": "virtualbox-host",
+                "attributes": {
+                    "virtualbox_available": True,
+                    "registered_vm_count": len(registered),
+                    "running_vm_count": sum(1 for guest_uuid in registered if guest_uuid in running),
+                },
+            })
+
+    sys.stdout.write(json.dumps({"version": 1, "observations": observations}, separators=(",", ":")))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

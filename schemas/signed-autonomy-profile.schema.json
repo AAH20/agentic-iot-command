@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://a2zsoc.com/schemas/signed-autonomy-profile.schema.json",
+  "title": "Domain-separated signed autonomy profile",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["profile", "signature"],
+  "properties": {
+    "profile": {"$ref": "autonomy-profile.schema.json"},
+    "signature": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["algorithm", "key_id", "signature_base64"],
+      "properties": {
+        "algorithm": {"const": "ed25519"},
+        "key_id": {"type": "string", "pattern": "^[A-Za-z0-9._-]+$"},
+        "signature_base64": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

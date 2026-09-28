@@ -1,0 +1,14 @@
+[Unit]
+Description=A2Z local execution-grant signer socket
+
+[Socket]
+ListenStream=/run/a2z-grant-signer/issuer.sock
+SocketUser=a2z-grant-signer
+SocketGroup=a2z-control
+SocketMode=0660
+DirectoryMode=0755
+Accept=no
+RemoveOnStop=yes
+
+[Install]
+WantedBy=sockets.target

@@ -1,0 +1,17 @@
+{
+  "tenant_id": "lab",
+  "requested_by": "operator-1",
+  "database_path": "/var/lib/a2z-control-plane/goals.sqlite3",
+  "autonomy_profile_path": null,
+  "trust_directory": null,
+  "impact_trust_directory": "/etc/a2z-control-plane/impact-assessment-trust",
+  "baseline_guardrails": {
+    "profile_id": "lab-default",
+    "autonomy_enabled": false,
+    "allowed_environments": ["lab"],
+    "allowed_targets": [],
+    "critical_decisions": "operator_approval",
+    "production_mutations": "deny",
+    "generic_shell": "deny"
+  }
+}

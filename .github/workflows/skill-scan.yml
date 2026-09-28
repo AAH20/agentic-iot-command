@@ -1,0 +1,51 @@
+name: skill-supply-chain-gate
+
+on:
+  pull_request:
+    paths:
+      - '**/SKILL.md'
+      - '**/skills/**'
+      - 'policies/skill-gate.json'
+      - 'scripts/**'
+  push:
+    branches: [main]
+    paths:
+      - '**/SKILL.md'
+      - '**/skills/**'
+
+permissions:
+  contents: read
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: astral-sh/setup-uv@v5
+      - name: Install SkillSpector in isolated environment
+        run: uv tool install 'skillspector[mcp] @ git+https://github.com/NVIDIA/skillspector.git@dabf4759a189be0f0428a2f7a472b3d5bdad1fe6'
+      - name: Validate policy baseline
+        run: ./scripts/validate-policies.sh
+      - name: Scan repository skill trees
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p security-reports/skills
+          mapfile -t files < <(find . -type f -name SKILL.md -print)
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No SKILL.md files found"
+            exit 0
+          fi
+          for f in "${files[@]}"; do
+            name="$(echo "$f" | tr '/ ' '__').json"
+            ./scripts/scan-skill.sh "$(dirname "$f")" "security-reports/skills/$name"
+          done
+      - name: Upload security reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: skill-security-reports
+          path: security-reports/skills
