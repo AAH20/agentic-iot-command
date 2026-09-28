@@ -218,7 +218,9 @@ class Ed25519ExecutionGrantVerifier:
             except (OSError, subprocess.TimeoutExpired) as exc:
                 raise PermissionError("execution-grant signature verification failed closed") from exc
         if result.returncode != 0:
-            raise PermissionError("execution-grant signature verification failed")
+            detail = (result.stderr or result.stdout).strip().splitlines()
+            reason = detail[-1][:240] if detail else f"verifier exited with status {result.returncode}"
+            raise PermissionError(f"execution-grant signature verification failed: {reason}")
 
 
 def _timestamp(value: Any, field: str) -> dt.datetime:
