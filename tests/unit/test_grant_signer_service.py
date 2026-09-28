@@ -105,17 +105,36 @@ class GrantSignerServiceTests(unittest.TestCase):
             listener.close()
             self.assertFalse(server.is_alive())
 
-            trust = root / "trust"
-            trust.mkdir(mode=0o700)
-            (trust / "lab-issuer-v1.pem").write_bytes(public_key.read_bytes())
-            verifier = Ed25519ExecutionGrantVerifier(trust, require_root_owned_trust=False)
-            expected = {name: self.grant[name] for name in (
-                "task_id", "tenant_id", "target_id", "operation_id", "environment", "plan_digest",
-                "authorization_mode", "authorization_id", "approval_id", "policy_digest",
-                "impact_assessment_digest", "lease_generation", "runner_id", "lease_token_sha256",
-            )}
-            verified, _digest = verifier.verify(envelope, expected_claims=expected)
-            self.assertEqual(verified, self.grant)
+            trust = Path("/usr/local/share") / f"a2z-grant-test-{uuid4().hex}"
+            if not Path("/usr/bin/sudo").is_file():
+                self.skipTest("sudo is required to create the root-owned verifier trust fixture")
+            subprocess.run(
+                ["sudo", "install", "-d", "-m", "0755", "--", str(trust)],
+                check=True, capture_output=True,
+            )
+            try:
+                subprocess.run(
+                    ["sudo", "install", "-m", "0644", "--", str(public_key),
+                     str(trust / "lab-issuer-v1.pem")],
+                    check=True, capture_output=True,
+                )
+                verifier = Ed25519ExecutionGrantVerifier(trust, require_root_owned_trust=True)
+                expected = {name: self.grant[name] for name in (
+                    "task_id", "tenant_id", "target_id", "operation_id", "environment", "plan_digest",
+                    "authorization_mode", "authorization_id", "approval_id", "policy_digest",
+                    "impact_assessment_digest", "lease_generation", "runner_id", "lease_token_sha256",
+                )}
+                verified, _digest = verifier.verify(envelope, expected_claims=expected)
+                self.assertEqual(verified, self.grant)
+            finally:
+                subprocess.run(
+                    ["sudo", "rm", "--", str(trust / "lab-issuer-v1.pem")],
+                    check=False, capture_output=True,
+                )
+                subprocess.run(
+                    ["sudo", "rmdir", "--", str(trust)],
+                    check=False, capture_output=True,
+                )
 
 
 if __name__ == "__main__":
