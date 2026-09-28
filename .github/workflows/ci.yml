@@ -38,3 +38,15 @@ jobs:
         run: python -m unittest discover -s tests/unit -v
       - name: Validate shell syntax
         run: bash -n scripts/*.sh
+      - name: Validate embedded verifier Python
+        run: |
+          python3 - <<'PY'
+          import ast
+          import pathlib
+          import re
+          text = pathlib.Path("scripts/verify-execution-grant.sh").read_text()
+          match = re.search(r"^python3 - .*<<'PY'\n(.*?)\nPY$", text, re.M | re.S)
+          if not match:
+              raise SystemExit("execution-grant verifier Python heredoc is missing")
+          ast.parse(match.group(1))
+          PY

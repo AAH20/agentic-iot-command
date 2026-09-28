@@ -59,7 +59,10 @@ def unique_pairs(items):
 record = json.loads(pathlib.Path(sys.argv[1]).read_text(encoding="utf-8"), object_pairs_hook=unique_pairs)
 try:
     signature = base64.b64decode(record["signature"]["signature_base64"], validate=True)
-payload = json.dumps({"domain": "a2z.execution-grant.v2", "grant": record["grant"]}, sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False).encode("utf-8")
+    payload = json.dumps(
+        {"domain": "a2z.execution-grant.v2", "grant": record["grant"]},
+        sort_keys=True, separators=(",", ":"), ensure_ascii=True, allow_nan=False,
+    ).encode("utf-8")
 except (KeyError, TypeError, ValueError) as exc:
     raise SystemExit(f"BLOCK: invalid execution grant encoding: {exc}")
 temp = pathlib.Path(sys.argv[2])
