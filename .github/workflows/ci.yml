@@ -29,9 +29,12 @@ jobs:
           python -m json.tool policies/skill-gate.json >/dev/null
           python -m json.tool policies/runtime-defaults.json >/dev/null
           for schema in schemas/*.json; do python -m json.tool "$schema" >/dev/null; done
+      - name: Prepare private test temporary directory
+        run: install -d -m 700 "$RUNNER_TEMP/a2z-test-tmp"
       - name: Run local policy tests
         env:
           PYTHONPATH: src
+          TMPDIR: ${{ runner.temp }}/a2z-test-tmp
         run: python -m unittest discover -s tests/unit -v
       - name: Validate shell syntax
         run: bash -n scripts/*.sh

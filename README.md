@@ -1,5 +1,42 @@
 # Agentic_IoT_Command — Agentic Infrastructure Command Center
 
+[![CI](https://github.com/AAH20/agentic-iot-command/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/AAH20/agentic-iot-command/actions/workflows/ci.yml)
+[![License: AGPL-3.0-only](https://img.shields.io/badge/License-AGPL--3.0-only-blue.svg)](LICENSE)
+
+> A governed command center for infrastructure operations: observe first, plan
+> with evidence, require policy and human authorization, and keep execution
+> explicitly disabled until independently validated.
+
+**Status:** early-stage source prototype. It is not installed on the Ubuntu
+host, has no deployed worker, and does not provide live infrastructure control.
+
+## Architecture
+
+The control plane separates proposals, authorization, worker boundaries, and
+evidence. The published implementation remains non-executing by default.
+
+```mermaid
+flowchart LR
+  OP[Operator] --> UI[Command center]
+  UI --> API[Loopback API]
+  SRC[Authorized sources] --> ADAPTER[Read-only adapters]
+  ADAPTER --> API
+  API --> DB[(Tenant-scoped PostgreSQL)]
+  AG[Agents and MCP clients] --> POLICY[Policy and approval gates]
+  POLICY --> PLAN[Typed plans and durable workflows]
+  PLAN --> API
+  API --> EVID[Hash-linked evidence]
+  API -. execution disabled .-> DENY[No live infrastructure mutation]
+```
+
+**Explore:** [architecture handoff](ARCHITECTURE_HANDOFF.md) ·
+[threat model](THREAT_MODEL.md) ·
+[local integrations](docs/LOCAL_INTEGRATIONS.md) ·
+[VirtualBox demo boundary](docs/VIRTUALBOX_MUTATION_ADAPTER.md)
+
+<details>
+<summary>Detailed implementation status and security notes</summary>
+
 Product brand: **Agentic_IoT_Command**. The existing PostgreSQL schema retains
 the legacy `opsatlas` namespace for compatibility; this does not change the
 product name and can be migrated separately.
@@ -88,6 +125,8 @@ on signed failure/unknown receipts or unexpected credential issuance; a fresh
 single-use approval bound to an evidence digest is required to reset it. The
 worker-side breaker gate remains unimplemented.
 
+</details>
+
 Run the local core checks with:
 
 ```bash
@@ -95,7 +134,16 @@ Run the local core checks with:
 PYTHONPATH=src python3 -m unittest discover -s tests/unit -v
 ```
 
-## Documents
+## Documentation
+
+Start with the [architecture and implementation handoff](ARCHITECTURE_HANDOFF.md),
+[energy-to-compute operations](docs/ENERGY_TO_COMPUTE_OPERATIONS.md),
+[local integrations](docs/LOCAL_INTEGRATIONS.md),
+[database and analytics](docs/DATABASE_AND_ANALYTICS.md), and
+[security threat model](THREAT_MODEL.md).
+
+<details>
+<summary>Full document and source index</summary>
 
 - [`SKILL_INGESTION_SECURITY.md`](./SKILL_INGESTION_SECURITY.md) — SkillSpector-centered ingestion, hooks, scanning, verdicts, quarantine, and runtime controls.
 - [`ARCHITECTURE_HANDOFF.md`](./ARCHITECTURE_HANDOFF.md) — complete system architecture and implementation plan for the new Codex agent.
@@ -170,6 +218,8 @@ PYTHONPATH=src python3 -m unittest discover -s tests/unit -v
 - [`src/control_plane_core/iam.py`](./src/control_plane_core/iam.py) — workload identity, session, and break-glass boundaries.
 - [`.github/workflows/skill-scan.yml`](./.github/workflows/skill-scan.yml) — CI hook for skill changes.
 
+</details>
+
 ## Non-goals
 
 This project does not provide a path into classified networks, bypass authorization, collect intelligence, or create hidden access. Any government or classified deployment requires the relevant sponsor, security authority, facility, personnel, export, privacy, and accreditation processes.
@@ -195,7 +245,7 @@ Use only the specifically named local demo database described in
 [`docs/DATABASE_AND_ANALYTICS.md`](docs/DATABASE_AND_ANALYTICS.md). Never point
 seed/reset scripts at a production or shared database.
 
-## Architecture at a glance
+## Detailed request and data flows
 
 ```mermaid
 flowchart LR

@@ -148,7 +148,10 @@ class PostconditionApiTests(unittest.TestCase):
             root = Path(temporary)
 
             def run(*args):
-                subprocess.run([str(openssl), *args], check=True, capture_output=True, timeout=15)
+                subprocess.run(
+                    [str(openssl), *args], check=True, capture_output=True,
+                    timeout=15, cwd=root,
+                )
 
             ca_key, ca_cert = root / "ca.key", root / "ca.pem"
             server_key, server_csr, server_cert = root / "server.key", root / "server.csr", root / "server.pem"
