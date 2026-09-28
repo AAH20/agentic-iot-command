@@ -116,13 +116,22 @@ class GrantSignerServiceTests(unittest.TestCase):
                  "-m", "0750", "--", str(trust)],
                 check=True, capture_output=True,
             )
+            verifier_source = Path(__file__).resolve().parents[2] / "scripts" / "verify-execution-grant.sh"
+            verifier_copy = trust / "verify-execution-grant.sh"
             try:
                 subprocess.run(
                     ["sudo", "install", "-o", "root", "-g", service_group,
                      "-m", "0640", "--", str(public_key), str(trust / "lab-issuer-v1.pem")],
                     check=True, capture_output=True,
                 )
-                verifier = Ed25519ExecutionGrantVerifier(trust, require_root_owned_trust=True)
+                subprocess.run(
+                    ["sudo", "install", "-o", "root", "-g", "root",
+                     "-m", "0755", "--", str(verifier_source), str(verifier_copy)],
+                    check=True, capture_output=True,
+                )
+                verifier = Ed25519ExecutionGrantVerifier(
+                    trust, verifier_bin=verifier_copy, require_root_owned_trust=True,
+                )
                 expected = {name: self.grant[name] for name in (
                     "task_id", "tenant_id", "target_id", "operation_id", "environment", "plan_digest",
                     "authorization_mode", "authorization_id", "approval_id", "policy_digest",
@@ -132,7 +141,7 @@ class GrantSignerServiceTests(unittest.TestCase):
                 self.assertEqual(verified, self.grant)
             finally:
                 subprocess.run(
-                    ["sudo", "rm", "--", str(trust / "lab-issuer-v1.pem")],
+                    ["sudo", "rm", "--", str(trust / "lab-issuer-v1.pem"), str(verifier_copy)],
                     check=False, capture_output=True,
                 )
                 subprocess.run(
