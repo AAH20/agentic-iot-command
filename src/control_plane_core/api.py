@@ -731,7 +731,7 @@ class LocalControlPlaneApi:
         )
 
 
-def serve(*, host: str = "127.0.0.1", port: int = 8787, api: LocalControlPlaneApi | None = None) -> None:
+def serve(*, host: str = "127.0.0.1", port: int = 8794, api: LocalControlPlaneApi | None = None) -> None:
     if host not in {"127.0.0.1", "::1", "localhost"}:
         raise ValueError("local API refuses non-loopback bind addresses")
     application = api or LocalControlPlaneApi()
@@ -746,6 +746,7 @@ def serve(*, host: str = "127.0.0.1", port: int = 8787, api: LocalControlPlaneAp
             self.wfile.write(data)
 
         def do_GET(self) -> None:  # noqa: N802
+            request_path = urlsplit(self.path).path
             static_assets = {
                 "/assets/onboarding.js": "onboarding.js",
                 "/assets/topology.js": "topology.js",
@@ -753,8 +754,8 @@ def serve(*, host: str = "127.0.0.1", port: int = 8787, api: LocalControlPlaneAp
                 "/assets/placement-comparison.js": "placement-comparison.js",
                 "/assets/placement-scenarios.js": "placement-scenarios.js",
             }
-            if self.path in static_assets:
-                asset = Path(__file__).resolve().parents[2] / "ui" / static_assets[self.path]
+            if request_path in static_assets:
+                asset = Path(__file__).resolve().parents[2] / "ui" / static_assets[request_path]
                 try:
                     data = asset.read_bytes()
                 except OSError:
@@ -767,7 +768,7 @@ def serve(*, host: str = "127.0.0.1", port: int = 8787, api: LocalControlPlaneAp
                 self.end_headers()
                 self.wfile.write(data)
                 return
-            if self.path == "/" or self.path == "/index.html":
+            if request_path in {"/", "/index.html"}:
                 page = Path(__file__).resolve().parents[2] / "ui" / "index.html"
                 try:
                     data = page.read_bytes()

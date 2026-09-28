@@ -9,10 +9,11 @@ For databases created before this extension, apply
 [`../database/migrations/001_cost_intelligence.sql`](../database/migrations/001_cost_intelligence.sql)
 and then [`../database/migrations/002_lifecycle_rollup_fix.sql`](../database/migrations/002_lifecycle_rollup_fix.sql)
 and [`../database/migrations/003_estimate_price_link_validation.sql`](../database/migrations/003_estimate_price_link_validation.sql)
-and [`../database/migrations/004_placement_comparison_snapshots.sql`](../database/migrations/004_placement_comparison_snapshots.sql)
 once each as the database owner after reviewing the target DSN and taking a backup.
-They are additive; the API reports the dedicated cost-schema error until they are applied.
-`../database/demo_cost_seed.sql` is an optional synthetic-only addition for a demo tenant.
+Apply [`../database/migrations/004_placement_comparison_snapshots.sql`](../database/migrations/004_placement_comparison_snapshots.sql)
+too when using saved placement comparisons; without it, `GET /v1/placement/scenarios`
+returns 503. The migrations are additive. `../database/demo_cost_seed.sql` is an
+optional synthetic-only addition for a demo tenant.
 
 ## Scope and honest runtime state
 
@@ -59,7 +60,7 @@ python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements-db.txt
 export A2Z_DATABASE_URL=postgresql:///opsatlas_dev
-PYTHONPATH=src python3 scripts/run-local-api.py --host 127.0.0.1 --port 8787
+PYTHONPATH=src python3 scripts/run-local-api.py --host 127.0.0.1 --port 8794
 ```
 
 Use a restricted application role in real deployments; the schema owner used

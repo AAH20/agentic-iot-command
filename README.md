@@ -293,7 +293,7 @@ sequenceDiagram
 
 | Stage | Scope | Exit evidence |
 |---|---|---|
-| 0 · Local demonstrator | Tenant-scoped schema, source-unverified UI, explicit synthetic walkthrough, read-only API | Seed/reset boundary tests, schema and policy tests pass; screenshots/GIF remain outstanding |
+| 0 · Local demonstrator | Tenant-scoped schema, source-unverified UI, explicit synthetic walkthrough, read-only API | Seed/reset boundary tests, schema and policy tests pass; synthetic screenshot gallery and GIF committed |
 | 1 · Trustworthy source onboarding | Connector contract, secret-reference boundary, read-only probe, schema/unit/quality/freshness validation | Adapter contract tests, redacted diagnostic evidence, operator-reviewed tenant mapping |
 | 2 · Decision-quality analytics | Lineage-complete KPIs, data-quality SLOs, robust baselines, failure labels, reproducible model evaluations | Backtests, calibration/error reports, drift controls, human review; no forecast on insufficient/non-authoritative data |
 | 3 · Operational integrations | Versioned vendor/cloud/facility read adapters and durable workflow references | Vendor-specific sandbox tests, least privilege, rate-limit and stale-data behavior, rollback/runbook |
@@ -308,12 +308,35 @@ the architecture, integration, security, and local-development documents.
 
 The local walkthrough is available at
 `http://127.0.0.1:8794/?tenant_id=00000000-0000-4000-8000-000000000001&demo=synthetic`.
-No screenshots or GIF are currently committed under `docs/media/`; the visual
-demo deliverable is still outstanding. This README intentionally does not use
-fabricated application imagery. Any future recording should use this explicit
-synthetic view, preserve the `SYNTHETIC DEMO · NOT LIVE` watermark, and avoid
-implying live integrations or infrastructure control. A complete feature tour
-will require multiple focused captures rather than one screen.
+These captures show that explicit synthetic tenant only. The visible watermark
+is preserved in every frame; the fixtures are illustrative, not live telemetry,
+inventory, prices, approvals, or operational evidence. Integrations are not
+connected, and infrastructure execution remains disabled.
+
+![Synthetic demo walkthrough](docs/media/overview.gif)
+
+<details>
+<summary>Browse focused screens</summary>
+
+| Area | Screenshot |
+|---|---|
+| Command picture | [command-picture.png](docs/media/command-picture.png) |
+| Fleet & inventory | [fleet-inventory.png](docs/media/fleet-inventory.png) |
+| Goals & plans | [goals-plans.png](docs/media/goals-plans.png) |
+| Approvals | [approvals.png](docs/media/approvals.png) |
+| Agents & models | [agents-models.png](docs/media/agents-models.png) |
+| Integrations | [integrations.png](docs/media/integrations.png) |
+| IAM & PAM | [iam-pam.png](docs/media/iam-pam.png) |
+| Topology & drift | [topology-drift.png](docs/media/topology-drift.png) |
+| Evidence & audit | [evidence-audit.png](docs/media/evidence-audit.png) |
+| Energy & facilities | [energy-facilities.png](docs/media/energy-facilities.png) |
+| Sizing & economics | [sizing-economics.png](docs/media/sizing-economics.png) |
+| Placement tradeoffs | [placement-tradeoffs.png](docs/media/placement-tradeoffs.png) |
+| Governance & MasterKeys | [governance-masterkeys.png](docs/media/governance-masterkeys.png) |
+| Suggested workloads | [suggested-workloads.png](docs/media/suggested-workloads.png) |
+| Critical & GRC | [critical-grc.png](docs/media/critical-grc.png) |
+
+</details>
 
 ## License
 

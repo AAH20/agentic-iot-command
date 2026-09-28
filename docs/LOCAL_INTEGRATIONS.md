@@ -10,11 +10,11 @@ returned by status endpoints.
 From the project root:
 
 ```bash
-PYTHONPATH=src python3 scripts/run-local-api.py --host 127.0.0.1 --port 8787
+PYTHONPATH=src python3 scripts/run-local-api.py --host 127.0.0.1 --port 8794
 ```
 
-Open `http://127.0.0.1:8787/`. Verify the API separately with
-`curl http://127.0.0.1:8787/healthz`. The server rejects non-loopback bind
+Open `http://127.0.0.1:8794/`. Verify the API separately with
+`curl http://127.0.0.1:8794/healthz`. The server rejects non-loopback bind
 addresses. Do not publish this development API to a LAN or the internet; it
 does not include production user authentication.
 
