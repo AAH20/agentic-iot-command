@@ -282,11 +282,11 @@ sequenceDiagram
   UI->>API: Read tenant-scoped view
   API->>DB: Apply tenant context and fetch bounded rows
   DB-->>API: Records with provenance and quality
-  API-->>UI: Read model; execution_permitted=false
-  Note over UI,DB: Demo fixtures appear only with demo=synthetic and remain watermarked
+  API-->>UI: Read model (execution disabled)
+  Note over UI,DB: Demo fixtures are synthetic and visibly watermarked
   O->>UI: Register connector draft
   UI->>API: Narrow read-only contract
-  API-->>UI: Draft metadata; probe is a separate explicit action
+  API-->>UI: Draft metadata, with probing as a separate explicit action
 ```
 
 ## Roadmap
